@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,10 +20,15 @@ import geocoder.kw.tex.myapplication.Model.DaoSession;
 import geocoder.kw.tex.myapplication.Model.Mantan;
 import geocoder.kw.tex.myapplication.Model.MantanDao;
 import geocoder.kw.tex.myapplication.R;
+import geocoder.kw.tex.myapplication.adapter.MantanAdapter;
 
 public class ScrollingActivity extends AppCompatActivity {
     private MantanDao mantanDao;
     private Query<Mantan> mantanQuery;
+    private RecyclerView rvListData;
+    private List<Mantan> mantans;
+    private MantanAdapter mantanAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +40,9 @@ public class ScrollingActivity extends AppCompatActivity {
         mantanDao = daoSession.getMantanDao();
         //query for list
         mantanQuery = mantanDao.queryBuilder().orderAsc(MantanDao.Properties.TglJadian).build();
+
+        rvListData = (RecyclerView) findViewById(R.id.rv_isi_data);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +67,19 @@ public class ScrollingActivity extends AppCompatActivity {
         for (Mantan m : mantans){
             Log.d("DaoExample", "Data nih " + mantans.size()+ " isinya "+ m.getNama());
         }
+
+        setUpListData(mantans);
+
+    }
+
+    private void setUpListData(List<Mantan> mantans) {
+        this.mantans = mantans;
+
+        rvListData.setHasFixedSize(true);
+        rvListData.setLayoutManager(new LinearLayoutManager(this));
+        mantanAdapter = new MantanAdapter(mantans);
+        rvListData.setAdapter(mantanAdapter);
+
     }
 
     @Override
